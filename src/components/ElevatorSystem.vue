@@ -3,7 +3,7 @@
     <call-buttons
       :floors-count="systemConfig.floorsCount"
       v-model="calledButtons"
-      @update:modalValue="calledButtons = $event"
+      @update:modalValue="updateCallQueue($event)"
     />
 
     <div class="elevator-list">
@@ -44,6 +44,23 @@ export default {
 
   watch: {
     calledButtons() {
+      this.call();
+    },
+  },
+
+  created() {
+    for (let i = 1; i <= this.systemConfig.elevatorsCount; i += 1) {
+      this.systemState.push({
+        id: i,
+        currentFloor: 1,
+        targetFloor: null,
+        isBusy: false,
+      });
+    }
+  },
+
+  methods: {
+    call() {
       if (this.calledButtons.length === 0) return;
 
       for (let i = 0; i < this.systemState.length; i += 1) {
@@ -56,24 +73,23 @@ export default {
         }
       }
     },
-  },
 
-  created() {
-    for (let i = 1; i <= this.systemConfig.elevatorsCount; i += 1) {
-      this.systemState.push({
-        id: i,
-        targetFloor: null,
-        isBusy: false,
-      });
-    }
-  },
-
-  methods: {
     updateState(id, newValue) {
       for (let i = 0; i < this.systemState.length; i += 1) {
         if (this.systemState[i].id === id) {
+          this.systemState[i].currentFloor = this.systemState[i].targetFloor;
           this.systemState[i].isBusy = newValue;
         }
+      }
+    },
+
+    updateCallQueue(newValue) {
+      for (let i = 0; i < this.systemState.length; i += 1) {
+        const currentFloors = this.systemState.map((item) => item.currentFloor);
+
+        if (currentFloors.includes(newValue[newValue.length - 1])) return;
+
+        this.calledButtons = newValue;
       }
     },
   },
