@@ -34,12 +34,12 @@ export default {
   },
 
   emits: {
-    'update:modalValue': null,
+    'update:modelValue': null,
   },
 
   methods: {
     call(floor) {
-      this.$emit('update:modalValue', [...this.modelValue, floor]);
+      this.$emit('update:modelValue', [...this.modelValue, floor]);
     },
   },
 };

@@ -3,7 +3,7 @@
     <call-buttons
       :floors-count="systemConfig.floorsCount"
       v-model="calledButtons"
-      @update:modalValue="updateCallQueue($event)"
+      @update:modelValue="updateCallQueue($event)"
     />
 
     <div class="elevator-list">
