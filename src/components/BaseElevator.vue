@@ -48,6 +48,10 @@ export default {
     },
   },
 
+  emits: {
+    done: null,
+  },
+
   data: () => ({
     movingTime: 1000,
     waitingTime: 3000,
@@ -76,6 +80,12 @@ export default {
         }
       },
       deep: true,
+    },
+
+    isWaiting() {
+      if (!this.isWaiting) {
+        this.$emit('done', false);
+      }
     },
   },
 

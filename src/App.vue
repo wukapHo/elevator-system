@@ -1,27 +1,22 @@
 <template>
-  <call-buttons
-    v-model="calledButtons"
-    @update:modalValue="calledButtons = $event"
-  />
-
-  <div class="elevator-list">
-    <base-elevator />
-  </div>
+  <elevator-system :system-config="systemConfig" />
 </template>
 
 <script>
-import CallButtons from '@/components/CallButtons.vue';
-import BaseElevator from '@/components/BaseElevator.vue';
+import ElevatorSystem from '@/components/ElevatorSystem.vue';
 
 export default {
   name: 'App',
+
   components: {
-    CallButtons,
-    BaseElevator,
+    ElevatorSystem,
   },
 
   data: () => ({
-    calledButtons: [],
+    systemConfig: {
+      floorsCount: 5,
+      elevatorsCount: 3,
+    },
   }),
 };
 </script>
@@ -36,14 +31,5 @@ export default {
 body {
   height: 100vh;
   padding: 1vh;
-}
-
-.elevator-list {
-  position: absolute;
-  top: 1vh;
-  bottom: 1vh;
-  left: 7vh;
-  display: flex;
-  align-items: center;
 }
 </style>
