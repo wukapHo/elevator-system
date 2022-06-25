@@ -2,6 +2,7 @@
   <div class="elevator-system">
     <call-buttons
       :floors-count="systemConfig.floorsCount"
+      :buttons-state="buttonsState"
       v-model="calledButtons"
       @update:modelValue="updateCallQueue($event)"
     />
@@ -40,6 +41,7 @@ export default {
   data: () => ({
     calledButtons: [],
     systemState: [],
+    buttonsState: [],
   }),
 
   watch: {
@@ -55,6 +57,13 @@ export default {
         currentFloor: 1,
         targetFloor: null,
         isBusy: false,
+      });
+    }
+
+    for (let i = 1; i <= this.systemConfig.floorsCount; i += 1) {
+      this.buttonsState.push({
+        id: i,
+        isShine: false,
       });
     }
   },
@@ -80,15 +89,18 @@ export default {
           this.systemState[i].currentFloor = this.systemState[i].targetFloor;
           this.systemState[i].isBusy = newValue;
         }
+        this.buttonsState[this.systemState[i].currentFloor - 1].isShine = false;
       }
     },
 
     updateCallQueue(newValue) {
       for (let i = 0; i < this.systemState.length; i += 1) {
         const currentFloors = this.systemState.map((item) => item.currentFloor);
+        const floorForAdd = newValue[newValue.length - 1];
 
-        if (currentFloors.includes(newValue[newValue.length - 1])) return;
+        if (currentFloors.includes(floorForAdd)) return;
 
+        this.buttonsState[floorForAdd - 1].isShine = true;
         this.calledButtons = newValue;
       }
     },

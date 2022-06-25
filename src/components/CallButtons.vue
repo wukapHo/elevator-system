@@ -8,7 +8,7 @@
       {{ floor }}
       <button
         class="call-buttons__item"
-        :class="{ 'call-buttons__item--called': modelValue.includes(floor) }"
+        :class="{ 'call-buttons__item--called': buttonsState[floor - 1].isShine }"
         @click="call(floor)"
       >
         &ocir;
@@ -30,6 +30,11 @@ export default {
     floorsCount: {
       type: Number,
       default: 5,
+    },
+
+    buttonsState: {
+      type: Array,
+      default: () => ([]),
     },
   },
 
