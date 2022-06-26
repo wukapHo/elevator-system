@@ -15,7 +15,7 @@
       }"
     >
       <div
-        v-if="isMoving"
+        v-if="elevatorState.isMoving"
         class="elevator-shaft__cab-indicator"
         :class="{
           'elevator-shaft__cab-indicator--up': elevatorState.targetFloor > currentFloor,
@@ -40,11 +40,12 @@ export default {
 
     elevatorState: {
       type: Object,
-      default: () => ({
-        id: null,
-        targetFloor: null,
-        isBusy: false,
-      }),
+      required: true,
+    },
+
+    settings: {
+      type: Object,
+      required: true,
     },
   },
 
@@ -53,9 +54,6 @@ export default {
   },
 
   data: () => ({
-    movingTime: 1000,
-    waitingTime: 3000,
-    isMoving: false,
     isWaiting: false,
     currentFloor: 1,
   }),
@@ -81,28 +79,20 @@ export default {
       },
       deep: true,
     },
-
-    isWaiting() {
-      if (!this.isWaiting) {
-        this.$emit('done', false);
-      }
-    },
   },
 
   methods: {
     move(direction) {
       if (this.currentFloor === this.elevatorState.targetFloor) {
-        this.isMoving = false;
+        this.$emit('done', { id: this.elevatorState.id, currentFloor: this.currentFloor });
         this.isWaiting = true;
 
         setTimeout(() => {
           this.isWaiting = false;
-        }, this.waitingTime);
+        }, this.settings.waitingTime);
 
         return;
       }
-
-      this.isMoving = true;
 
       if (direction === 'up') {
         this.currentFloor += 1;
@@ -112,7 +102,7 @@ export default {
 
       setTimeout(() => {
         this.move(direction);
-      }, this.movingTime);
+      }, this.settings.movingTime);
     },
   },
 };

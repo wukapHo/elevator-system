@@ -8,7 +8,7 @@
       {{ floor }}
       <button
         class="call-buttons__item"
-        :class="{ 'call-buttons__item--called': buttonsState[floor - 1].isShine }"
+        :class="{ 'call-buttons__item--called': buttonsState[floor - 1].isCalled }"
         @click="call(floor)"
       >
         &ocir;
@@ -22,29 +22,21 @@ export default {
   name: 'CallButtons',
 
   props: {
-    modelValue: {
-      type: Array,
-      default: () => ([]),
-    },
-
     floorsCount: {
       type: Number,
       default: 5,
     },
-
-    buttonsState: {
-      type: Array,
-      default: () => ([]),
-    },
   },
 
-  emits: {
-    'update:modelValue': null,
+  computed: {
+    buttonsState() {
+      return this.$store.state.callButtons;
+    },
   },
 
   methods: {
     call(floor) {
-      this.$emit('update:modelValue', [...this.modelValue, floor]);
+      this.$store.commit('call', floor);
     },
   },
 };

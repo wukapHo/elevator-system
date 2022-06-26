@@ -1,19 +1,15 @@
 <template>
   <div class="elevator-system">
-    <call-buttons
-      :floors-count="systemConfig.floorsCount"
-      :buttons-state="buttonsState"
-      v-model="calledButtons"
-      @update:modelValue="updateCallQueue($event)"
-    />
+    <call-buttons :floors-count="systemConfig.floorsCount" />
 
     <div class="elevator-list">
       <base-elevator
         v-for="elevator in systemConfig.elevatorsCount"
         :key="elevator"
         :floors-count="systemConfig.floorsCount"
-        :elevator-state="systemState.find(({id}) => id === elevator)"
-        @done="updateState(elevator, $event)"
+        :elevator-state="$store.state.elevatorSystem.find(({ id }) => id === elevator)"
+        :settings="settings"
+        @done="done($event)"
       />
     </div>
   </div>
@@ -39,70 +35,70 @@ export default {
   },
 
   data: () => ({
-    calledButtons: [],
-    systemState: [],
-    buttonsState: [],
+    settings: {
+      movingTime: 1000,
+      waitingTime: 3000,
+    },
   }),
 
+  computed: {
+    callQueue() {
+      return this.$store.state.callQueue;
+    },
+  },
+
   watch: {
-    calledButtons() {
-      this.call();
+    callQueue: {
+      handler() {
+        this.move();
+      },
+      deep: true,
     },
   },
 
   created() {
     for (let i = 1; i <= this.systemConfig.elevatorsCount; i += 1) {
-      this.systemState.push({
+      this.$store.state.elevatorSystem.push({
         id: i,
         currentFloor: 1,
         targetFloor: null,
+        isMoving: false,
         isBusy: false,
       });
     }
 
     for (let i = 1; i <= this.systemConfig.floorsCount; i += 1) {
-      this.buttonsState.push({
-        id: i,
-        isShine: false,
+      this.$store.state.callButtons.push({
+        floor: i,
+        isCalled: false,
       });
     }
   },
 
   methods: {
-    call() {
-      if (this.calledButtons.length === 0) return;
+    move() {
+      if (this.callQueue.length === 0) {
+        return;
+      }
 
-      for (let i = 0; i < this.systemState.length; i += 1) {
-        if (!this.systemState[i].isBusy) {
-          const currentCall = this.calledButtons.shift();
-          this.systemState[i].targetFloor = currentCall;
-          this.systemState[i].isBusy = true;
+      for (let i = 0; i < this.$store.state.elevatorSystem.length; i += 1) {
+        if (!this.$store.state.elevatorSystem[i].isBusy) {
+          const currentCall = this.$store.state.callQueue.shift();
+          this.$store.commit('move', { idx: i, targetFloor: currentCall });
 
           return;
         }
       }
     },
 
-    updateState(id, newValue) {
-      for (let i = 0; i < this.systemState.length; i += 1) {
-        if (this.systemState[i].id === id) {
-          this.systemState[i].currentFloor = this.systemState[i].targetFloor;
-          this.systemState[i].isBusy = newValue;
+    done(elevator) {
+      this.$store.commit('stop', { idx: elevator.id - 1, currentFloor: elevator.currentFloor });
+
+      setTimeout(() => {
+        if (this.callQueue.length) {
+          this.move();
         }
-        this.buttonsState[this.systemState[i].currentFloor - 1].isShine = false;
-      }
-    },
-
-    updateCallQueue(newValue) {
-      for (let i = 0; i < this.systemState.length; i += 1) {
-        const currentFloors = this.systemState.map((item) => item.currentFloor);
-        const floorForAdd = newValue[newValue.length - 1];
-
-        if (currentFloors.includes(floorForAdd)) return;
-
-        this.buttonsState[floorForAdd - 1].isShine = true;
-        this.calledButtons = newValue;
-      }
+      }, this.settings.waitingTime);
     },
   },
 };
