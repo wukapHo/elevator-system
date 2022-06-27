@@ -84,7 +84,11 @@ export default {
       for (let i = 0; i < this.$store.state.elevatorSystem.length; i += 1) {
         if (!this.$store.state.elevatorSystem[i].isBusy) {
           const currentCall = this.$store.state.callQueue.shift();
-          this.$store.commit('move', { idx: i, targetFloor: currentCall });
+
+          this.$store.commit('move', {
+            idx: i,
+            targetFloor: currentCall,
+          });
 
           return;
         }
@@ -92,7 +96,10 @@ export default {
     },
 
     done(elevator) {
-      this.$store.commit('stop', { idx: elevator.id - 1, currentFloor: elevator.currentFloor });
+      this.$store.commit('stop', {
+        idx: elevator.id - 1,
+        currentFloor: elevator.currentFloor,
+      });
 
       setTimeout(() => {
         if (this.callQueue.length) {

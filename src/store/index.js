@@ -28,12 +28,10 @@ export default createStore({
       state.elevatorSystem[idx].currentFloor = currentFloor;
       state.elevatorSystem[idx].isMoving = false;
       state.callButtons[currentFloor - 1].isCalled = false;
+
       setTimeout(() => {
         state.elevatorSystem[idx].isBusy = false;
       }, 3000);
     },
-  },
-
-  actions: {
   },
 });

@@ -6,6 +6,7 @@
       class="call-buttons__item-wrapper"
     >
       {{ floor }}
+
       <button
         class="call-buttons__item"
         :class="{ 'call-buttons__item--called': buttonsState[floor - 1].isCalled }"
