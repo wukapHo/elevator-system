@@ -1,4 +1,6 @@
-# elevator-system
+# Elevator system
+
+## [Demo](https://elevator-system-tc.netlify.app/)
 
 ## Project setup
 ```
