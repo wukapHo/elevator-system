@@ -14,7 +14,7 @@ export default {
 
   data: () => ({
     systemConfig: {
-      floorsCount: 5,
+      floorsCount: 7,
       elevatorsCount: 3,
     },
   }),
