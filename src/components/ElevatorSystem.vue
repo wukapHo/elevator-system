@@ -9,6 +9,7 @@
         :floors-count="systemConfig.floorsCount"
         :elevator-state="$store.state.elevatorSystem.find(({ id }) => id === elevator)"
         :settings="settings"
+        @update="update($event)"
         @done="done($event)"
       />
     </div>
@@ -93,6 +94,13 @@ export default {
           return;
         }
       }
+    },
+
+    update(elevator) {
+      this.$store.commit('update', {
+        idx: elevator.idx,
+        currentFloor: elevator.currentFloor,
+      });
     },
 
     done(elevator) {

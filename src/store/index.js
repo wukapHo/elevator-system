@@ -24,8 +24,11 @@ export default createStore({
       state.elevatorSystem[idx].isBusy = true;
     },
 
-    stop(state, { idx, currentFloor }) {
+    update(state, { idx, currentFloor }) {
       state.elevatorSystem[idx].currentFloor = currentFloor;
+    },
+
+    stop(state, { idx, currentFloor }) {
       state.elevatorSystem[idx].isMoving = false;
       state.callButtons[currentFloor - 1].isCalled = false;
 

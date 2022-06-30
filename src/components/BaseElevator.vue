@@ -50,6 +50,7 @@ export default {
   },
 
   emits: {
+    update: null,
     done: null,
   },
 
@@ -99,6 +100,8 @@ export default {
       } else if (direction === 'down') {
         this.currentFloor -= 1;
       }
+
+      this.$emit('update', { idx: this.elevatorState.id - 1, currentFloor: this.elevatorState.targetFloor });
 
       setTimeout(() => {
         this.move(direction);
