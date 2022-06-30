@@ -46,6 +46,10 @@ export default {
     callQueue() {
       return this.$store.state.callQueue;
     },
+
+    closestElevatorIdx() {
+      return this.$store.getters.closestElevatorIdx;
+    },
   },
 
   watch: {
@@ -82,16 +86,30 @@ export default {
         return;
       }
 
-      for (let i = 0; i < this.$store.state.elevatorSystem.length; i += 1) {
-        if (!this.$store.state.elevatorSystem[i].isBusy) {
-          const currentCall = this.$store.state.callQueue.shift();
+      const freeElevators = this.$store.state.elevatorSystem.filter(
+        ({ isBusy }) => isBusy === false,
+      );
 
-          this.$store.commit('move', {
-            idx: i,
-            targetFloor: currentCall,
-          });
+      if (freeElevators.length >= 2) {
+        const idx = this.closestElevatorIdx;
+        const currentCall = this.$store.state.callQueue.shift();
 
-          return;
+        this.$store.commit('move', {
+          idx,
+          targetFloor: currentCall,
+        });
+      } else {
+        for (let i = 0; i < this.$store.state.elevatorSystem.length; i += 1) {
+          if (!this.$store.state.elevatorSystem[i].isBusy) {
+            const currentCall = this.$store.state.callQueue.shift();
+
+            this.$store.commit('move', {
+              idx: i,
+              targetFloor: currentCall,
+            });
+
+            return;
+          }
         }
       }
     },

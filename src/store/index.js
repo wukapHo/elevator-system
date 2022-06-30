@@ -7,6 +7,22 @@ export default createStore({
     callQueue: [],
   },
 
+  getters: {
+    closestElevatorIdx(state) {
+      const freeElevators = state.elevatorSystem.filter(({ isBusy }) => isBusy === false);
+      const currentFloors = freeElevators.map((item) => item.currentFloor);
+      const currenCall = state.callQueue[0];
+      const closestElevatorFloor = currentFloors.sort(
+        (a, b) => Math.abs(currenCall - a) - Math.abs(currenCall - b),
+      )[0];
+      const closestElevator = state.elevatorSystem.find(
+        ({ currentFloor }) => currentFloor === closestElevatorFloor,
+      );
+
+      return state.elevatorSystem.indexOf(closestElevator);
+    },
+  },
+
   mutations: {
     call(state, floor) {
       if (state.elevatorSystem.some(({ currentFloor }) => currentFloor === floor)
